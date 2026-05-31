@@ -4017,6 +4017,7 @@
     font-size: 11pt !important;
 }
 }</style>
+
  </style>
 </head>
 <body data-theme="light">
@@ -4025,14 +4026,16 @@
 
   <!-- Top Bar -->
   <div class="top-bar">
-    <div class="top-bar-info">
-      <span><i class="fas fa-phone"></i> +8801715986646</span>
+   <div class="top-bar-info">
+      <span><i class="fas fa-phone"></i> +8801340561000</span>
+      <span id="topBarSyncTime" style="font-size: 0.7rem; background: rgba(255,255,255,0.2); padding: 2px 8px; border-radius: 12px;"><i class="fas fa-cloud-upload-alt"></i> <span id="topBarSyncText">--</span></span>
     </div>
 <div class="telegram-status-center" id="telegramStatusContainer"></div>
     <div class="top-bar-actions">
 <button class="top-bar-btn" id="instantDownloadBtn" title="Download Backup Now">
     <i class="fas fa-file-download"></i>
   </button>
+
       <button class="add-customer-top-btn" id="addCustomerBtn">
         <i class="fas fa-user-plus"></i> Add Customer
       </button>
@@ -4288,7 +4291,7 @@
     </div>
   </div>
 <!-- Google Sheets Live Preview Panel -->
-<div class="google-sheets-panel show" id="googleSheetsPanel">
+<div class="google-sheets-panel" id="googleSheetsPanel" style="display: none;">
     <div class="sheets-panel-header">
         <h3><i class="fab fa-google"></i> Google Sheets Live Backup</h3>
         <div class="sheets-sync-controls">
@@ -4329,13 +4332,59 @@
     </div>
 </div>
   <footer id="appFooter">
-    <p>&copy; 2025 Roza Gift Corner & Electric. All Rights Reserved.</p>
-    <span class="footer-separator">|</span>
-    <p>Powered by <a href="https://web.facebook.com/farhantanzidshiyam" target="_blank">Farhan Tanzid Shiyam </a></p>
-    <span class="footer-separator">|</span>
-    <p><a href="#" id="dataBackupLink">Data Backup (Drive)</a></p>
+  <div class="compact-footer">
+    <!-- Top Row - Quick Links -->
+    <div class="footer-top">
+      <div class="footer-brand">
+        <i class="fas fa-gift"></i>
+        <strong>RGCE</strong>
+        <span>| Gifts • Electrical • Cosmetics</span>
+      </div>
+      <div class="footer-links-row">
+        <a href="#" id="compactDashboard"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+        <a href="#" id="compactReport"><i class="fas fa-chart-line"></i> Report</a>
+        <a href="#" id="compactStats"><i class="fas fa-chart-pie"></i> Stats</a>
+        <a href="#" id="compactBackup"><i class="fas fa-database"></i> Backup</a>
+        <a href="#" id="compactShop"><i class="fas fa-store"></i> Shop</a>
+        <a href="#" id="compactDeveloper"><i class="fas fa-code"></i> Dev</a>
+        <a href="#" id="compactHelp"><i class="fas fa-question-circle"></i> Help</a>
+      </div>
+    </div>
 
-  </footer>
+    <!-- Middle Row - Contact & Social -->
+    <div class="footer-middle">
+      <div class="footer-contact-row">
+        <span><i class="fas fa-map-marker-alt"></i> Moshjid Market, Naohata Mor, Mohadevpur, Naogaon</span>
+        <span><i class="fas fa-phone-alt"></i> <a href="tel:+8801715986646">+8801715986646</a></span>
+        <span><i class="fas fa-envelope"></i> <a href="mailto:rozagiftcorner@gmail.com">rozagiftcorner@gmail.com</a></span>
+        <span><i class="fas fa-clock"></i> 8AM - 10PM</span>
+      </div>
+      <div class="footer-social-row">
+        <a href="https://web.facebook.com/profile.php?id=61569560136374" target="_blank" class="social-btn fb"><i class="fab fa-facebook-f"></i></a>
+        <a href="https://wa.me/8801715986646" target="_blank" class="social-btn wa"><i class="fab fa-whatsapp"></i></a>
+        <a href="https://www.instagram.com/roza_gift_corner/" target="_blank" class="social-btn ig"><i class="fab fa-instagram"></i></a>
+        <a href="#" id="compactTelegram" class="social-btn tg"><i class="fab fa-telegram-plane"></i></a>
+        <a href="https://www.youtube.com/@Rozagiftcornerandelectric" target="_blank" class="social-btn yt"><i class="fab fa-youtube"></i></a>
+      </div>
+    </div>
+
+    <!-- Bottom Row - Copyright & Badges -->
+    <div class="footer-bottom-row">
+      <div class="copyright-text" style="color: #ffffff; opacity: 0.8;">
+  © 2025 Roza Gift Corner & Electric | Powered by <a href="https://web.facebook.com/farhantanzidshiyam" target="_blank" style="color: #ffd700 !important; text-decoration: none;">Farhan Tanzid Shiyam</a> | 
+  <button id="showPasswordSheetBtn" style=""color: #ffffff; border: none; cursor: pointer; font-size: 0.7rem;" title="Password Sheet">
+    <i class="fas fa-key"></i> Passwords
+  </button>
+</div>
+      <div class="footer-badges">
+        <span><i class="fas fa-shield-alt"></i> DMCA</span>
+        <span><i class="fas fa-lock"></i> SSL</span>
+        <span><i class="fas fa-cloud-upload-alt"></i> Auto Backup</span>
+        <span><i class="fas fa-clock"></i> <span id="compactLiveTime"></span></span>
+      </div>
+    </div>
+  </div>
+</footer>
 
   <!-- Payment Modal -->
   <div id="paymentModal" class="modal">
@@ -5051,9 +5100,10 @@
         return [];
     }
 
-    function saveCustomers(arr) {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(arr));
-    }
+   function saveCustomers(arr) {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(arr));
+    triggerAutoSync(); // ADD THIS LINE - triggers auto sync
+}
 
     function saveSidebarState(expanded) {
         localStorage.setItem(SIDEBAR_STATE_KEY, expanded ? "expanded" : "collapsed");
@@ -5802,7 +5852,7 @@
                     <div class="single-receipt-header">
                         <div class="single-shop-name">ROZA GIFT CORNER & ELECTRIC</div>
                         <div class="single-shop-address">Moshjid Market, Naohata Mor, Mohadevpur, Naogaon</div>
-                        <div class="single-shop-contact">Contact: +8801715986646 | Business Hours: 8:00 AM - 10:00 PM</div>
+                        <div class="single-shop-contact">Contact: +8801340561000 | Business Hours: 8:00 AM - 10:00 PM</div>
                     </div>
                     
                     <div class="single-decoration">••••••••••••••••••••••••••••••••••••</div>
@@ -6533,22 +6583,16 @@ sheetsSidebarBtn.className = 'sidebar-btn';
 sheetsSidebarBtn.id = 'sidebarGoogleSheets';
 sheetsSidebarBtn.innerHTML = '<span class="btn-icon"><i class="fab fa-google-drive"></i></span><span class="btn-text">Google Sheets Sync</span>';
 sheetsSidebarBtn.addEventListener('click', function() {
-    if (!googleSheetsSync) {
-        googleSheetsSync = new GoogleSheetsSync();
-    }
-    
     const panel = document.getElementById('googleSheetsPanel');
-    if (panel.classList.contains('show')) {
-        panel.classList.remove('show');
-        showToast('Google Sheets panel hidden', 'info');
-    } else {
-        panel.classList.add('show');
-        showToast('Google Sheets panel shown', 'success');
-        
-        // Refresh preview
+    if (panel.style.display === 'none' || panel.style.display === '') {
+        panel.style.display = 'block';
+        showToast('📊 Google Sheets panel opened', 'success');
         if (googleSheetsSync) {
             googleSheetsSync.refreshSheetsPreview();
         }
+    } else {
+        panel.style.display = 'none';
+        showToast('📊 Google Sheets panel closed', 'info');
     }
 });
 // ========== DATA BACKUP PASSWORD PROTECTION ==========
@@ -6753,6 +6797,15 @@ window.addEventListener('load', function() {
         }
     }, 2000);
 });
+// Show last sync time in top bar on load
+const lastSync = localStorage.getItem('roza_last_sheet_sync');
+if (lastSync) {
+    const topBarSpan = document.getElementById('topBarSyncText');
+    if (topBarSpan) {
+        const date = new Date(lastSync);
+        topBarSpan.textContent = date.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
+    }
+}
   // Add setup button event
   const setupBtn = document.getElementById('setupTelegramBackupBtn');
   if (setupBtn) {
@@ -6889,7 +6942,9 @@ class GoogleSheetsSync {
             }
             
             showToast(`✅ ${sheetData.length} customers synced to Google Sheets`, 'success', 5000);
-            
+            // Update top bar time
+const topBarSpan = document.getElementById('topBarSyncText');
+if (topBarSpan) topBarSpan.textContent = new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
             // Refresh preview after a delay
             setTimeout(() => {
                 this.refreshSheetsPreview();
@@ -7081,6 +7136,15 @@ class GoogleSheetsSync {
 
 // Initialize Google Sheets Sync on page load
 let googleSheetsSync = null;
+// Auto-sync trigger on data changes
+function triggerAutoSync() {
+    if (googleSheetsSync && !googleSheetsSync.syncInProgress && customers.length > 0) {
+        clearTimeout(window.autoSyncTimer);
+        window.autoSyncTimer = setTimeout(() => {
+            googleSheetsSync.syncToGoogleSheets();
+        }, 3000);
+    }
+}
 // ========== MANUAL WORK REPORT (SIMPLE BLANK FORMS) ==========
 function generateManualReportHtml() {
     const now = new Date();
@@ -9792,6 +9856,196 @@ document.getElementById('fullscreenSheetBtn').title = 'Click to open in new wind
       </div>
     </div>
   </div>
+<script>
+// Compact Footer Functionality
+(function() {
+  // Live Clock
+  function updateCompactClock() {
+    const clock = document.getElementById('compactLiveTime');
+    if (clock) {
+      const now = new Date();
+      clock.textContent = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+    }
+  }
+  updateCompactClock();
+  setInterval(updateCompactClock, 1000);
+
+  // Helper to click sidebar
+  function clickSidebarBtn(text) {
+    const btns = document.querySelectorAll('.sidebar-btn');
+    for (let btn of btns) {
+      if (btn.textContent.toLowerCase().includes(text.toLowerCase())) {
+        btn.click();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        break;
+      }
+    }
+  }
+
+  // Setup navigation links
+  const navLinks = {
+    compactDashboard: 'Dashboard',
+    compactReport: 'Summary',
+    compactStats: 'Stats',
+    compactBackup: 'Backup',
+    compactShop: 'Details',
+    compactDeveloper: 'Developer'
+  };
+
+  for (const [id, text] of Object.entries(navLinks)) {
+    const link = document.getElementById(id);
+    if (link) {
+      link.addEventListener('click', (e) => {
+        e.preventDefault();
+        clickSidebarBtn(text);
+      });
+    }
+  }
+
+  // Help Link
+  const helpLink = document.getElementById('compactHelp');
+  if (helpLink) {
+    helpLink.addEventListener('click', (e) => {
+      e.preventDefault();
+      if (typeof showToast === 'function') {
+        showToast('📖 Use sidebar menu for all features', 'info', 3000);
+      }
+    });
+  }
+
+  // Telegram Link
+  const tgLink = document.getElementById('compactTelegram');
+  if (tgLink) {
+    tgLink.addEventListener('click', (e) => {
+      e.preventDefault();
+      const tgBtn = document.getElementById('setupTelegramBackupBtn');
+      if (tgBtn) tgBtn.click();
+    });
+  }
+})();
+</script>
+<script>
+// ========== PASSWORD SHEET MODAL - CLEAN CODE ==========
+(function() {
+  // Master password to view the sheet
+  const MASTER_PASSWORD = "fmkk";
+  
+  // Create the Password Prompt Modal (Enter password)
+  const promptModal = document.createElement("div");
+  promptModal.className = "modal";
+  promptModal.id = "passwordPromptModal";
+  promptModal.innerHTML = `
+    <div class="modal-content" style="max-width: 350px;">
+      <div class="modal-header">
+        <h2 class="modal-title"><i class="fas fa-lock"></i> Secure Access</h2>
+        <span class="close-btn" onclick="document.getElementById('passwordPromptModal').style.display='none'">&times;</span>
+      </div>
+      <div class="modal-body">
+        <p style="text-align: center; margin-bottom: 15px;">Enter password to view Password Sheet</p>
+        <input type="password" id="pswInput" class="modal-input" placeholder="Enter password" autocomplete="off" style="width: 100%; padding: 10px;">
+        <p id="pswError" style="color: #dc3545; font-size: 0.8rem; margin-top: 8px; display: none;">❌ Incorrect password!</p>
+        <div class="modal-actions" style="margin-top: 20px;">
+          <button class="modal-btn cancel" onclick="document.getElementById('passwordPromptModal').style.display='none'">Cancel</button>
+          <button class="modal-btn save" id="verifyPswBtn" style="background: #28a745; color: white;">Verify</button>
+        </div>
+      </div>
+    </div>
+  `;
+  document.body.appendChild(promptModal);
+  
+  // Create the Password Sheet Modal (Show all passwords)
+  const sheetModal = document.createElement("div");
+  sheetModal.className = "modal";
+  sheetModal.id = "passwordSheetModal";
+  sheetModal.innerHTML = `
+    <div class="modal-content" style="max-width: 500px;">
+      <div class="modal-header" style="border-bottom: 2px solid #ffd700;">
+        <h2 class="modal-title" style="color: #ffd700;"><i class="fas fa-key"></i> RGCE Password Sheet</h2>
+        <span class="close-btn" onclick="document.getElementById('passwordSheetModal').style.display='none'">&times;</span>
+      </div>
+      <div class="modal-body">
+        <table style="width: 100%; border-collapse: collapse;">
+          <tr style="background: #e8f1ff;"><th style="padding: 10px; text-align: left;">Feature</th><th style="padding: 10px; text-align: left;">Password</th></tr>
+          <tr><td style="padding: 8px; border-bottom: 1px solid #ddd;"><i class="fas fa-eraser"></i> Clear All Notes</td><td style="padding: 8px; border-bottom: 1px solid #ddd; font-weight: bold;">3508</td></tr>
+          <tr><td style="padding: 8px; border-bottom: 1px solid #ddd;"><i class="fas fa-undo-alt"></i> Clear All Amounts</td><td style="padding: 8px; border-bottom: 1px solid #ddd; font-weight: bold;">3508</td></tr>
+          <tr><td style="padding: 8px; border-bottom: 1px solid #ddd;"><i class="fas fa-filter"></i> Clear Amounts by Source</td><td style="padding: 8px; border-bottom: 1px solid #ddd; font-weight: bold;">3508</td></tr>
+          <tr><td style="padding: 8px; border-bottom: 1px solid #ddd;"><i class="fas fa-trash-alt"></i> Delete Customer</td><td style="padding: 8px; border-bottom: 1px solid #ddd; font-weight: bold;">3508</td></tr>
+          <tr><td style="padding: 8px; border-bottom: 1px solid #ddd;"><i class="fas fa-chart-line"></i> Summary Report</td><td style="padding: 8px; border-bottom: 1px solid #ddd; font-weight: bold;">3508</td></tr>
+          <tr><td style="padding: 8px; border-bottom: 1px solid #ddd;"><i class="fas fa-chart-pie"></i> Live Statistics</td><td style="padding: 8px; border-bottom: 1px solid #ddd; font-weight: bold;">3508</td></tr>
+          <tr><td style="padding: 8px; border-bottom: 1px solid #ddd;"><i class="fas fa-database"></i> Google Drive Backup</td><td style="padding: 8px; border-bottom: 1px solid #ddd; font-weight: bold;">3508</td></tr>
+          <tr style="background: #ffebee;"><td style="padding: 8px;"><i class="fas fa-skull-crossbones"></i> <strong>Clear ALL Data</strong></td><td style="padding: 8px; font-weight: bold; color: #dc3545;">1812693380</td></tr>
+        </table>
+        <div style="margin-top: 15px; padding: 10px; background: #f0f0f0; border-radius: 5px; text-align: center; font-size: 0.8rem;">
+          <i class="fas fa-shield-alt"></i> Keep these passwords secure!
+        </div>
+      </div>
+      <div class="modal-actions" style="justify-content: center; padding: 15px;">
+        <button class="modal-btn cancel" onclick="document.getElementById('passwordSheetModal').style.display='none'" style="background: #dc3545; color: white;">Close</button>
+      </div>
+    </div>
+  `;
+  document.body.appendChild(sheetModal);
+  
+  // Get button from footer
+  const showBtn = document.getElementById("showPasswordSheetBtn");
+  
+  // Function to show password prompt
+  function showPrompt() {
+    promptModal.style.display = "flex";
+    const input = document.getElementById("pswInput");
+    if (input) {
+      input.value = "";
+      input.focus();
+    }
+    const error = document.getElementById("pswError");
+    if (error) error.style.display = "none";
+  }
+  
+  // Function to verify password
+  function verifyPassword() {
+    const input = document.getElementById("pswInput");
+    const error = document.getElementById("pswError");
+    
+    if (input.value === MASTER_PASSWORD) {
+      // Close prompt and show sheet
+      promptModal.style.display = "none";
+      sheetModal.style.display = "flex";
+      input.value = "";
+    } else {
+      error.style.display = "block";
+      input.value = "";
+      input.focus();
+      setTimeout(() => {
+        error.style.display = "none";
+      }, 2000);
+    }
+  }
+  
+  // Add event listeners
+  if (showBtn) {
+    showBtn.addEventListener("click", showPrompt);
+  }
+  
+  document.getElementById("verifyPswBtn")?.addEventListener("click", verifyPassword);
+  
+  // Enter key support
+  document.getElementById("pswInput")?.addEventListener("keypress", function(e) {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      verifyPassword();
+    }
+  });
+  
+  // Close modals when clicking outside
+  window.addEventListener("click", function(e) {
+    if (e.target === promptModal) promptModal.style.display = "none";
+    if (e.target === sheetModal) sheetModal.style.display = "none";
+  });
+})();
+
+
+</script>
+
    </body>
 
 </html>
