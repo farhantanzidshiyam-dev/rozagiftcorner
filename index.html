@@ -4335,7 +4335,7 @@
         Last sync: Never
     </div>
 </div>
-  <footer id="appFooter">
+ <footer id="appFooter">
   <div class="compact-footer">
     <!-- Top Row - Quick Links -->
     <div class="footer-top">
@@ -4372,14 +4372,29 @@
       </div>
     </div>
 
-    <!-- Bottom Row - Copyright & Badges -->
+    <!-- Bottom Row - Copyright & Badges WITH STATS -->
     <div class="footer-bottom-row">
-      <div class="copyright-text" style="color: #ffffff; opacity: 0.8;">
-  © 2025 Roza Gift Corner & Electric | Powered by <a href="https://web.facebook.com/farhantanzidshiyam" target="_blank" style="color: #ffd700 !important; text-decoration: none;">Farhan Tanzid Shiyam</a> | 
-  <button id="showPasswordSheetBtn" style=""color: #ffffff; border: none; cursor: pointer; font-size: 0.7rem;" title="Password Sheet">
-    <i class="fas fa-key"></i> Passwords
-  </button>
-</div>
+      <!-- Customer Stats Section -->
+      <div class="footer-stats" style="display: flex; gap: 20px; justify-content: center; flex-wrap: wrap; padding: 5px 0; width: 100%;">
+        <span style="color: var(--accent); font-weight: 600; font-size: 0.85rem;">
+          <i class="fas fa-users"></i> Total: <span id="footerTotalCount">0</span>
+        </span>
+        <span style="color: var(--paid); font-weight: 600; font-size: 0.85rem;">
+          <i class="fas fa-check-circle"></i> Paid: <span id="footerPaidCount">0</span>
+          <span style="font-size: 0.7rem; opacity: 0.7;">(Full: <span id="footerFullPaid">0</span> | Partial: <span id="footerPartialPaid">0</span>)</span>
+        </span>
+        <span style="color: var(--overdue); font-weight: 600; font-size: 0.85rem;">
+          <i class="fas fa-exclamation-circle"></i> Due: <span id="footerDueCount">0</span>
+        </span>
+      </div>
+      
+      <div class="copyright-text" style="color: #ffffff; opacity: 0.8; width: 100%; text-align: center;">
+        © 2025 Roza Gift Corner & Electric | Powered by <a href="https://web.facebook.com/farhantanzidshiyam" target="_blank" style="color: #ffd700 !important; text-decoration: none;">Farhan Tanzid Shiyam</a> | 
+        <button id="showPasswordSheetBtn" style="color: #ffffff; border: none; cursor: pointer; font-size: 0.7rem; background: transparent;" title="Password Sheet">
+          <i class="fas fa-key"></i> Passwords
+        </button>
+      </div>
+      
       <div class="footer-badges">
         <span><i class="fas fa-shield-alt"></i> DMCA</span>
         <span><i class="fas fa-lock"></i> SSL</span>
@@ -4389,7 +4404,6 @@
     </div>
   </div>
 </footer>
-
   <!-- Payment Modal -->
   <div id="paymentModal" class="modal">
     <div class="modal-content">
@@ -5223,19 +5237,60 @@
 
     // --- Render Functions ---
 
-    function renderHeaderStats() {
-        const total = customers.length;
-        document.getElementById("totalCustomerCount").textContent = `Total: ${total}`;
-    }
+   function renderHeaderStats() {
+    const total = customers.length;
+    
+    // Calculate detailed stats
+    let fullPaid = 0;
+    let partialPaid = 0;
+    let due = 0;
+    
+    customers.forEach(c => {
+        const currentDue = Math.max(0, c.due - c.paid);
+        
+        // Check if customer has any due amount OR has 0 due and 0 paid (hidden due)
+        if (c.due === 0 && c.paid === 0) {
+            // Hidden due - customer has no payment recorded
+            due++;
+        } else if (currentDue > 0 && c.paid === 0) {
+            // Full due (has due amount, no payment made)
+            due++;
+        } else if (currentDue > 0 && c.paid > 0) {
+            // Partial paid (has remaining due but some payment made)
+            partialPaid++;
+        } else {
+            // Fully paid (currentDue === 0 and either due or paid has value)
+            fullPaid++;
+        }
+    });
+    
+    const totalPaid = fullPaid + partialPaid;
+    
+    // Update sidebar total
+    document.getElementById("totalCustomerCount").textContent = `Total: ${total}`;
+    
+    // Update footer stats
+    const footerTotal = document.getElementById("footerTotalCount");
+    const footerPaid = document.getElementById("footerPaidCount");
+    const footerFull = document.getElementById("footerFullPaid");
+    const footerPartial = document.getElementById("footerPartialPaid");
+    const footerDue = document.getElementById("footerDueCount");
+    
+    if (footerTotal) footerTotal.textContent = total;
+    if (footerPaid) footerPaid.textContent = totalPaid;
+    if (footerFull) footerFull.textContent = fullPaid;
+    if (footerPartial) footerPartial.textContent = partialPaid;
+    if (footerDue) footerDue.textContent = due;
+}
 
-    function renderTable() {
-        blinkingTimeouts.forEach(timeout => clearTimeout(timeout));
-        blinkingTimeouts = [];
-        
-        const filteredCustomers = filterCustomers();
-        const total = filteredCustomers.length;
-        const totalPages = Math.ceil(total / pageSize);
-        
+function renderTable() {
+    blinkingTimeouts.forEach(timeout => clearTimeout(timeout));
+    blinkingTimeouts = [];
+    
+    const filteredCustomers = filterCustomers();
+    const total = filteredCustomers.length;
+    const totalPages = Math.ceil(total / pageSize);
+    
         // Ensure currentPage is within bounds
         if (currentPage > totalPages && totalPages > 0) {
             currentPage = totalPages;
