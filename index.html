@@ -4219,11 +4219,12 @@
               <option value="">Filter by Address (All)</option>
             </select>
             <select id="statusFilterSelect" class="filter-select">
-              <option value="">Filter by Status (All)</option>
-              <option value="Due">Due</option>
-              <option value="Partial Paid">Partial Paid</option>
-              <option value="Paid">Paid</option>
-            </select>
+    <option value="">Filter by Status (All)</option>
+    <option value="Hidden Due">Hidden Due</option>
+    <option value="Due">Due</option>
+    <option value="Partial Paid">Partial Paid</option>
+    <option value="Paid">Paid</option>
+</select>
             <select id="sourceFilterSelect" class="filter-select">
               <option value="">Filter by Source (All)</option>
               <option value="1">1</option>
@@ -5194,12 +5195,14 @@
             const matchesSource = !sourceFilter || customer.source === sourceFilter;
 
             const currentDue = Math.max(0, customer.due - customer.paid);
-            let status = "Paid";
-            if (currentDue > 0 && customer.paid === 0) {
-                status = "Due";
-            } else if (currentDue > 0 && customer.paid > 0) {
-                status = "Partial Paid";
-            }
+let status = "Paid";
+if (customer.due === 0 && customer.paid === 0) {
+    status = "Hidden Due";
+} else if (currentDue > 0 && customer.paid === 0) {
+    status = "Due";
+} else if (currentDue > 0 && customer.paid > 0) {
+    status = "Partial Paid";
+}
 
             const matchesStatus = !statusFilter || status === statusFilter;
 
@@ -5324,17 +5327,20 @@ function renderTable() {
         }
 
         customersToDisplay.forEach((customer, index) => {
-            const currentDue = Math.max(0, customer.due - customer.paid);
-            let status = "Paid";
-            let rowClass = "";
-            if (currentDue > 0 && customer.paid === 0) {
-                status = "Due";
-                rowClass = "overdue";
-            } else if (currentDue > 0 && customer.paid > 0) {
-                status = "Partial Paid";
-            } else {
-                rowClass = "paid";
-            }
+           const currentDue = Math.max(0, customer.due - customer.paid);
+let status = "Paid";
+let rowClass = "";
+if (customer.due === 0 && customer.paid === 0) {
+    status = "Hidden Due";
+    rowClass = "overdue";
+} else if (currentDue > 0 && customer.paid === 0) {
+    status = "Due";
+    rowClass = "overdue";
+} else if (currentDue > 0 && customer.paid > 0) {
+    status = "Partial Paid";
+} else {
+    rowClass = "paid";
+}
 
             const row = document.createElement("tr");
             row.className = rowClass;
@@ -5597,15 +5603,21 @@ function renderTable() {
         let paidCount = 0;
         let partialCount = 0;
         
-        customers.forEach(c => {
-            totalDue += Number(c.due) || 0;
-            totalPaid += Number(c.paid) || 0;
-            const currentDue = Math.max(0, c.due - c.paid);
-            
-            if (currentDue > 0 && c.paid === 0) dueCount++;
-            else if (currentDue > 0 && c.paid > 0) partialCount++;
-            else paidCount++;
-        });
+      customers.forEach(c => {
+    totalDue += Number(c.due) || 0;
+    totalPaid += Number(c.paid) || 0;
+    const currentDue = Math.max(0, c.due - c.paid);
+    
+    if (c.due === 0 && c.paid === 0) {
+        dueCount++; // Hidden due counts as due
+    } else if (currentDue > 0 && c.paid === 0) {
+        dueCount++;
+    } else if (currentDue > 0 && c.paid > 0) {
+        partialCount++;
+    } else {
+        paidCount++;
+    }
+});
         
         const netDue = Math.max(0, totalDue - totalPaid);
         const averageDue = totalCustomers > 0 ? Math.round(totalDue / totalCustomers) : 0;
@@ -7044,12 +7056,14 @@ if (topBarSpan) topBarSpan.textContent = new Date().toLocaleTimeString([], {hour
     prepareSheetData() {
         return customers.map((customer, index) => {
             const currentDue = Math.max(0, customer.due - customer.paid);
-            let status = "Paid";
-            if (currentDue > 0 && customer.paid === 0) {
-                status = "Due";
-            } else if (currentDue > 0 && customer.paid > 0) {
-                status = "Partial Paid";
-            }
+let status = "Paid";
+if (customer.due === 0 && customer.paid === 0) {
+    status = "Hidden Due";
+} else if (currentDue > 0 && customer.paid === 0) {
+    status = "Due";
+} else if (currentDue > 0 && customer.paid > 0) {
+    status = "Partial Paid";
+}
 
             return {
                 ID: customer.id || `CUST-${index + 1}`,
@@ -7738,10 +7752,14 @@ function printManualReport() {
 
         customersToPrint.forEach((c, index) => {
             const currentDue = Math.max(0, c.due - c.paid);
-            let status = "Paid";
-            if (currentDue > 0 && c.paid === 0) status = "Due";
-            else if (currentDue > 0 && c.paid > 0) status = "Partial Paid";
-
+let status = "Paid";
+if (c.due === 0 && c.paid === 0) {
+    status = "Hidden Due";
+} else if (currentDue > 0 && c.paid === 0) {
+    status = "Due";
+} else if (currentDue > 0 && c.paid > 0) {
+    status = "Partial Paid";
+}
             const dueDisplay = (c.due === 0 && c.paid === 0) ? "" : formatMoneyPrint(c.due);
             const paidDisplay = (c.due === 0 && c.paid === 0) ? "" : formatMoneyPrint(c.paid);
             const currentDueDisplay = (c.due === 0 && c.paid === 0) ? "" : formatMoneyPrint(currentDue);
